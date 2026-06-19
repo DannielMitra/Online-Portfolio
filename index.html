@@ -78,6 +78,20 @@
   }
 
   ::selection { background: var(--gold); color: #fff; }
+  .bg-glow {
+    position: fixed; inset: 0;
+    z-index: -1; pointer-events: none;
+    background: radial-gradient(
+      260px circle at var(--mx, 50%) var(--my, 50%),
+      rgba(79, 209, 197, 0.10),
+      rgba(79, 209, 197, 0.04) 40%,
+      transparent 72%
+    );
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+  .bg-glow.on { opacity: 1; }
+  html[data-theme="light"] .bg-glow { display: none; }
   html[data-theme="dark"] ::selection,
   :root:not([data-theme="light"]) ::selection { color: #0a111e; }
 
@@ -544,6 +558,8 @@
 </head>
 <body>
 
+<div class="bg-glow" aria-hidden="true"></div>
+
 <nav>
   <div class="nav-inner">
     <a href="#top" class="brand"><span class="badge">DM</span>DLM_MITRA</a>
@@ -816,8 +832,36 @@
     const wrap = document.getElementById('avatar');
     if (!wrap) return;
     if (window.matchMedia && window.matchMedia('(hover: none)').matches) {
-      wrap.addEventListener('click', () => wrap.classList.toggle('swapped'));
+      let revertTimer;
+      wrap.addEventListener('click', () => {
+        wrap.classList.add('swapped');
+        clearTimeout(revertTimer);
+        revertTimer = setTimeout(() => wrap.classList.remove('swapped'), 2500);
+      });
     }
+  })();
+
+  /* ----- cursor-reactive background glow ----- */
+  (function () {
+    if (!window.matchMedia) return;
+    if (window.matchMedia('(hover: none)').matches) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const glow = document.querySelector('.bg-glow');
+    if (!glow) return;
+    let x = 0, y = 0, ticking = false;
+    window.addEventListener('mousemove', (e) => {
+      x = e.clientX; y = e.clientY;
+      if (!glow.classList.contains('on')) glow.classList.add('on');
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(() => {
+          glow.style.setProperty('--mx', x + 'px');
+          glow.style.setProperty('--my', y + 'px');
+          ticking = false;
+        });
+      }
+    });
+    document.addEventListener('mouseleave', () => glow.classList.remove('on'));
   })();
 
   /* ----- mobile nav ----- */
