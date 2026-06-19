@@ -230,6 +230,8 @@
     transition: opacity 0.45s ease;
   }
   .avatar:hover .avatar-alt { opacity: 1; }
+  .avatar.swapped .avatar-alt { opacity: 1; }
+  .avatar { cursor: pointer; }
   .avatar .presence {
     position: absolute; right: -5px; bottom: -5px; z-index: 2;
     width: 18px; height: 18px; border-radius: 50%;
@@ -807,6 +809,15 @@
     if (img.complete && img.naturalWidth > 0) show();
     img.addEventListener('load', () => { if (img.naturalWidth > 0) wrap.classList.add('loaded'); });
     img.addEventListener('error', () => wrap.classList.remove('loaded'));
+  })();
+
+  /* ----- avatar tap-to-swap (touch / no-hover devices) ----- */
+  (function () {
+    const wrap = document.getElementById('avatar');
+    if (!wrap) return;
+    if (window.matchMedia && window.matchMedia('(hover: none)').matches) {
+      wrap.addEventListener('click', () => wrap.classList.toggle('swapped'));
+    }
   })();
 
   /* ----- mobile nav ----- */
