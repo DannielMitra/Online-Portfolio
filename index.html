@@ -223,6 +223,13 @@
     color: var(--gold);
   }
   .avatar.loaded .avatar-fallback { display: none; }
+  .avatar-alt {
+    position: absolute; inset: 0;
+    background: url('profile-candid.jpg') center / cover no-repeat;
+    opacity: 0;
+    transition: opacity 0.45s ease;
+  }
+  .avatar:hover .avatar-alt { opacity: 1; }
   .avatar .presence {
     position: absolute; right: -5px; bottom: -5px; z-index: 2;
     width: 18px; height: 18px; border-radius: 50%;
@@ -570,6 +577,7 @@
         -->
         <div class="avatar" id="avatar">
           <img id="avatarImg" src="profile.jpg" alt="Photo of Danniel Lorenzo M. Mitra" />
+          <div class="avatar-alt" aria-hidden="true"></div>
           <span class="avatar-fallback">DLM</span>
           <span class="presence" title="Available for work"></span>
         </div>
